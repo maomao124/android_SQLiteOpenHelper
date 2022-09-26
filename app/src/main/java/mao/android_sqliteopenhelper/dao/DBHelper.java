@@ -6,6 +6,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import mao.android_sqliteopenhelper.entity.Student;
+
 /**
  * Project name(项目名称)：android_SQLiteOpenHelper
  * Package(包名): mao.android_sqliteopenhelper.dao
@@ -154,6 +159,12 @@ public class DBHelper extends SQLiteOpenHelper
 
     }
 
+    public List<Student> queryAll()
+    {
+        List<Student> list = new ArrayList<>();
 
+
+        return list;
+    }
 
 }
