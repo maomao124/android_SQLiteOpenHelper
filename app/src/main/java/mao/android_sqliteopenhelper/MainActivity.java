@@ -2,6 +2,7 @@ package mao.android_sqliteopenhelper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,11 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import mao.android_sqliteopenhelper.dao.DBHelper;
 import mao.android_sqliteopenhelper.entity.Student;
 
 /**
@@ -65,6 +68,16 @@ public class MainActivity extends AppCompatActivity
      */
     private static final String TAG = "MainActivity";
 
+    /**
+     * db helper
+     */
+    private DBHelper dbHelper;
+
+    /**
+     * 结果文本视图
+     */
+    private TextView resultTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -80,6 +93,7 @@ public class MainActivity extends AppCompatActivity
         nameEditText = findViewById(R.id.EditText_name);
         ageEditText = findViewById(R.id.EditText_age);
         weightEditText = findViewById(R.id.EditText_weight);
+        resultTextView = findViewById(R.id.TextView_result);
 
         saveButton.setOnClickListener(new View.OnClickListener()
         {
@@ -108,6 +122,37 @@ public class MainActivity extends AppCompatActivity
      */
     private void save()
     {
+//        try
+//        {
+//            long id = Long.parseLong(idEditText.getText().toString());
+//            String name = nameEditText.getText().toString();
+//            int age = Integer.parseInt(ageEditText.getText().toString());
+//            float weight = Float.parseFloat(weightEditText.getText().toString());
+//
+//            SharedPreferences.Editor editor = getSharedPreferences("text", MODE_PRIVATE).edit();
+//
+//            editor.putLong("id", id);
+//            editor.putString("name", name);
+//            editor.putInt("age", age);
+//            editor.putFloat("weight", weight);
+//
+//            editor.commit();
+//            //异步
+//            //editor.apply();
+//
+//            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+//        }
+//        catch (Exception e)
+//        {
+//            Log.e(TAG, "save: ", e);
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("异常")
+//                    .setMessage("出现异常，请检查输入\n异常内容为\n：" + e.getMessage())
+//                    .setPositiveButton("确定", null)
+//                    .create()
+//                    .show();
+//        }
+
         try
         {
             long id = Long.parseLong(idEditText.getText().toString());
@@ -115,17 +160,14 @@ public class MainActivity extends AppCompatActivity
             int age = Integer.parseInt(ageEditText.getText().toString());
             float weight = Float.parseFloat(weightEditText.getText().toString());
 
-            SharedPreferences.Editor editor = getSharedPreferences("text", MODE_PRIVATE).edit();
-
-            editor.putLong("id", id);
-            editor.putString("name", name);
-            editor.putInt("age", age);
-            editor.putFloat("weight", weight);
-
-            editor.commit();
-            //异步
-            //editor.apply();
-
+            Student student = new Student(id, name, age, weight);
+            boolean insert = dbHelper.insert(student);
+            if (!insert)
+            {
+                Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Log.d(TAG, "save: " + student);
             Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
         }
         catch (Exception e)
@@ -138,34 +180,56 @@ public class MainActivity extends AppCompatActivity
                     .create()
                     .show();
         }
-
-
     }
 
     /**
      * 加载
      */
+    @SuppressLint("SetTextI18n")
     private void load()
     {
-        SharedPreferences sharedPreferences = getSharedPreferences("text", MODE_PRIVATE);
-        long id = sharedPreferences.getLong("id", 0);
-        String name = sharedPreferences.getString("name", "");
-        int age = sharedPreferences.getInt("age", 0);
-        float weight = sharedPreferences.getFloat("weight", 0.0f);
+//        SharedPreferences sharedPreferences = getSharedPreferences("text", MODE_PRIVATE);
+//        long id = sharedPreferences.getLong("id", 0);
+//        String name = sharedPreferences.getString("name", "");
+//        int age = sharedPreferences.getInt("age", 0);
+//        float weight = sharedPreferences.getFloat("weight", 0.0f);
+//
+//        idEditText.setText(String.valueOf(id));
+//        nameEditText.setText(name);
+//        ageEditText.setText(String.valueOf(age));
+//        weightEditText.setText(String.valueOf(weight));
+//
+//
+//        String str = "学号：" + id + "\n姓名：" + name + "\n年龄：" + age + "\n体重：" + weight;
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("读取到的内容")
+//                .setMessage(str)
+//                .setPositiveButton("确定", null)
+//                .create()
+//                .show();
 
-        idEditText.setText(String.valueOf(id));
-        nameEditText.setText(name);
-        ageEditText.setText(String.valueOf(age));
-        weightEditText.setText(String.valueOf(weight));
 
+        Log.d(TAG, "load: start");
+        List<Student> list = dbHelper.queryAll();
+        resultTextView.setText("");
+        for (Student student : list)
+        {
+            Log.d(TAG, "load: " + student);
+            Long id = student.getId();
+            String name = student.getName();
+            Integer age = student.getAge();
+            Float weight = student.getWeight();
 
-        String str = "学号：" + id + "\n姓名：" + name + "\n年龄：" + age + "\n体重：" + weight;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("读取到的内容")
-                .setMessage(str)
-                .setPositiveButton("确定", null)
-                .create()
-                .show();
+            String str = "\n\n\n学号：" + id + "\n姓名：" + name + "\n年龄：" + age + "\n体重：" + weight;
+            resultTextView.setText(resultTextView.getText().toString() + str);
+            if (idEditText.getText().toString().equals(id.toString()))
+            {
+                idEditText.setText(String.valueOf(id));
+                nameEditText.setText(name);
+                ageEditText.setText(String.valueOf(age));
+                weightEditText.setText(String.valueOf(weight));
+            }
+        }
     }
 
     @Override
@@ -175,4 +239,19 @@ public class MainActivity extends AppCompatActivity
         save();
     }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        dbHelper = DBHelper.getInstance(this);
+        dbHelper.openReadConnection();
+        dbHelper.openWriteConnection();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        dbHelper.closeConnection();
+    }
 }

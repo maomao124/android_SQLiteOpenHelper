@@ -144,7 +144,7 @@ public class DBHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase db)
     {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
-                "id LONG PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 " name VARCHAR NOT NULL," +
                 " age INTEGER NOT NULL," +
                 " weight FLOAT NOT NULL)";
