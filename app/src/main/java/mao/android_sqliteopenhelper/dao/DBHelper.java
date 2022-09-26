@@ -1,6 +1,7 @@
 package mao.android_sqliteopenhelper.dao;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -159,11 +160,29 @@ public class DBHelper extends SQLiteOpenHelper
 
     }
 
+    /**
+     * 查询所有
+     *
+     * @return {@link List}<{@link Student}>
+     */
     public List<Student> queryAll()
     {
         List<Student> list = new ArrayList<>();
 
+        Cursor cursor = readDatabase.query(TABLE_NAME, null, "1=1", new String[]{}, null, null, null);
 
+        while (cursor.moveToNext())
+        {
+            Student student = new Student.Builder()
+                    .setId(cursor.getLong(0))
+                    .setName(cursor.getString(1))
+                    .setAge(cursor.getInt(2))
+                    .setWeight(cursor.getFloat(3))
+                    .build();
+            list.add(student);
+        }
+
+        cursor.close();
         return list;
     }
 

@@ -138,6 +138,58 @@ public class Student
         this.weight = weight;
     }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        Student student = (Student) o;
+
+        if (getId() != null ? !getId().equals(student.getId()) : student.getId() != null)
+        {
+            return false;
+        }
+        if (getName() != null ? !getName().equals(student.getName()) : student.getName() != null)
+        {
+            return false;
+        }
+        if (getAge() != null ? !getAge().equals(student.getAge()) : student.getAge() != null)
+        {
+            return false;
+        }
+        return getWeight() != null ? getWeight().equals(student.getWeight()) : student.getWeight() == null;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        result = 31 * result + (getAge() != null ? getAge().hashCode() : 0);
+        result = 31 * result + (getWeight() != null ? getWeight().hashCode() : 0);
+        return result;
+    }
+
+
+    @Override
+    @SuppressWarnings("all")
+    public String toString()
+    {
+        final StringBuilder stringbuilder = new StringBuilder();
+        stringbuilder.append("id：").append(id).append('\n');
+        stringbuilder.append("name：").append(name).append('\n');
+        stringbuilder.append("age：").append(age).append('\n');
+        stringbuilder.append("weight：").append(weight).append('\n');
+        return stringbuilder.toString();
+    }
+
     /**
      * 构建器
      *
