@@ -17,28 +17,27 @@ import mao.android_sqliteopenhelper.entity.Student;
 /**
  * Project name(项目名称)：android_SQLiteOpenHelper
  * Package(包名): mao.android_sqliteopenhelper.dao
- * Class(类名): DBHelper
+ * Class(类名): User2Dao
  * Author(作者）: mao
  * Author QQ：1296193245
  * GitHub：https://github.com/maomao124/
  * Date(创建日期)： 2022/9/26
- * Time(创建时间)： 22:08
+ * Time(创建时间)： 23:58
  * Version(版本): 1.0
  * Description(描述)： 无
  */
 
-public class DBHelper extends SQLiteOpenHelper
+public class User2Dao extends SQLiteOpenHelper
 {
-
     /**
      * 数据库名字
      */
-    private static final String DB_NAME = "student.db";
+    private static final String DB_NAME = "user.db";
 
     /**
      * 表名
      */
-    private static final String TABLE_NAME = "student_info";
+    private static final String TABLE_NAME = "user";
 
     /**
      * 数据库版本
@@ -48,7 +47,7 @@ public class DBHelper extends SQLiteOpenHelper
     /**
      * 实例，单例模式，懒汉式，双重检查锁方式
      */
-    private static volatile DBHelper dbHelper = null;
+    private static volatile User2Dao user2Dao = null;
 
     /**
      * 读数据库
@@ -62,7 +61,7 @@ public class DBHelper extends SQLiteOpenHelper
     /**
      * 标签
      */
-    private static final String TAG = "DBHelper";
+    private static final String TAG = "User2Dao";
 
 
     /**
@@ -70,7 +69,7 @@ public class DBHelper extends SQLiteOpenHelper
      *
      * @param context 上下文
      */
-    public DBHelper(@Nullable Context context)
+    public User2Dao(@Nullable Context context)
     {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -79,21 +78,21 @@ public class DBHelper extends SQLiteOpenHelper
      * 获得实例
      *
      * @param context 上下文
-     * @return {@link DBHelper}
+     * @return {@link User2Dao}
      */
-    public static DBHelper getInstance(Context context)
+    public static User2Dao getInstance(Context context)
     {
-        if (dbHelper == null)
+        if (user2Dao == null)
         {
-            synchronized (DBHelper.class)
+            synchronized (User2Dao.class)
             {
-                if (dbHelper == null)
+                if (user2Dao == null)
                 {
-                    dbHelper = new DBHelper(context);
+                    user2Dao = new User2Dao(context);
                 }
             }
         }
-        return dbHelper;
+        return user2Dao;
     }
 
     /**
@@ -105,7 +104,7 @@ public class DBHelper extends SQLiteOpenHelper
     {
         if (readDatabase == null || !readDatabase.isOpen())
         {
-            readDatabase = dbHelper.getReadableDatabase();
+            readDatabase = user2Dao.getReadableDatabase();
         }
         return readDatabase;
     }
@@ -119,7 +118,7 @@ public class DBHelper extends SQLiteOpenHelper
     {
         if (writeDatabase == null || !writeDatabase.isOpen())
         {
-            writeDatabase = dbHelper.getWritableDatabase();
+            writeDatabase = user2Dao.getWritableDatabase();
         }
         return readDatabase;
     }
@@ -146,6 +145,7 @@ public class DBHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
+
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 " name VARCHAR NOT NULL," +
@@ -167,6 +167,7 @@ public class DBHelper extends SQLiteOpenHelper
 
     }
 
+
     /**
      * 查询所有
      *
@@ -180,12 +181,10 @@ public class DBHelper extends SQLiteOpenHelper
 
         while (cursor.moveToNext())
         {
-            Student student = new Student.Builder()
-                    .setId(cursor.getLong(0))
-                    .setName(cursor.getString(1))
-                    .setAge(cursor.getInt(2))
-                    .setWeight(cursor.getFloat(3))
-                    .build();
+            Student student = new Student();
+
+            //todo:给字段赋值
+
             list.add(student);
         }
 
@@ -194,9 +193,9 @@ public class DBHelper extends SQLiteOpenHelper
     }
 
     /**
-     * 插入
+     * 插入一条数据
      *
-     * @param student 学生
+     * @param student Student对象
      * @return boolean
      */
     public boolean insert(Student student)
@@ -240,7 +239,7 @@ public class DBHelper extends SQLiteOpenHelper
     /**
      * 更新
      *
-     * @param student 学生
+     * @param student Student对象
      * @return boolean
      */
     public boolean update(Student student)
@@ -249,20 +248,6 @@ public class DBHelper extends SQLiteOpenHelper
         setContentValues(student, contentValues);
         int update = writeDatabase.update(TABLE_NAME, contentValues, "id=?", new String[]{student.getId().toString()});
         return update > 0;
-    }
-
-    /**
-     * 填充ContentValues
-     *
-     * @param student       Student
-     * @param contentValues ContentValues
-     */
-    private void setContentValues(Student student, ContentValues contentValues)
-    {
-        contentValues.put("id", student.getId());
-        contentValues.put("name", student.getName());
-        contentValues.put("age", student.getAge());
-        contentValues.put("weight", student.getWeight());
     }
 
 
@@ -279,4 +264,14 @@ public class DBHelper extends SQLiteOpenHelper
     }
 
 
+    /**
+     * 填充ContentValues
+     *
+     * @param student       Student
+     * @param contentValues ContentValues
+     */
+    private void setContentValues(Student student, ContentValues contentValues)
+    {
+        //todo:填充contentValues
+    }
 }
