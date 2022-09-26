@@ -33,12 +33,12 @@ public class DBHelper extends SQLiteOpenHelper
     /**
      * 数据库名字
      */
-    private static final String DB_NAME = "login.db";
+    private static final String DB_NAME = "student.db";
 
     /**
      * 表名
      */
-    private static final String TABLE_NAME = "login_info";
+    private static final String TABLE_NAME = "student_info";
 
     /**
      * 数据库版本
@@ -59,6 +59,9 @@ public class DBHelper extends SQLiteOpenHelper
      */
     private SQLiteDatabase writeDatabase;
 
+    /**
+     * 标签
+     */
     private static final String TAG = "DBHelper";
 
 
