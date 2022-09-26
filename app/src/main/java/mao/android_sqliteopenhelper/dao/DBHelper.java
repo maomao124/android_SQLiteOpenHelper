@@ -1,9 +1,11 @@
 package mao.android_sqliteopenhelper.dao;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -56,6 +58,8 @@ public class DBHelper extends SQLiteOpenHelper
      * 写数据库
      */
     private SQLiteDatabase writeDatabase;
+
+    private static final String TAG = "DBHelper";
 
 
     /**
@@ -185,5 +189,84 @@ public class DBHelper extends SQLiteOpenHelper
         cursor.close();
         return list;
     }
+
+    /**
+     * 插入
+     *
+     * @param student 学生
+     * @return boolean
+     */
+    public boolean insert(Student student)
+    {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", student.getId());
+        contentValues.put("name", student.getName());
+        contentValues.put("age", student.getAge());
+        contentValues.put("weight", student.getWeight());
+        long insert = writeDatabase.insert(TABLE_NAME, null, contentValues);
+        return insert > 0;
+    }
+
+    /**
+     * 插入多条数据
+     *
+     * @param list 列表
+     * @return boolean
+     */
+    public boolean insert(List<Student> list)
+    {
+        try
+        {
+            writeDatabase.beginTransaction();
+            for (Student student : list)
+            {
+                boolean insert = this.insert(student);
+                if (!insert)
+                {
+                    throw new Exception();
+                }
+            }
+            writeDatabase.setTransactionSuccessful();
+            return true;
+        }
+        catch (Exception e)
+        {
+            writeDatabase.endTransaction();
+            Log.e(TAG, "insert: ", e);
+            return false;
+        }
+    }
+
+    /**
+     * 更新
+     *
+     * @param student 学生
+     * @return boolean
+     */
+    public boolean update(Student student)
+    {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", student.getId());
+        contentValues.put("name", student.getName());
+        contentValues.put("age", student.getAge());
+        contentValues.put("weight", student.getWeight());
+
+        int update = writeDatabase.update(TABLE_NAME, contentValues, "id=?", new String[]{student.getId().toString()});
+        return update > 0;
+    }
+
+
+    /**
+     * 删除
+     *
+     * @param id id
+     * @return boolean
+     */
+    public boolean delete(long id)
+    {
+        int delete = writeDatabase.delete(TABLE_NAME, "id=?", new String[]{String.valueOf(id)});
+        return delete > 0;
+    }
+
 
 }
