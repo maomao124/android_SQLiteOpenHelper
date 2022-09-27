@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -164,8 +165,15 @@ public class MainActivity extends AppCompatActivity
             boolean insert = dbHelper.insert(student);
             if (!insert)
             {
-                Toast.makeText(this, "保存失败", Toast.LENGTH_SHORT).show();
-                return;
+                //插入失败，存在主键，转换为更新
+                boolean update = dbHelper.update(student);
+                if (!update)
+                {
+                    Toast.makeText(this, "更新失败", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.d(TAG, "update: " + student);
+                Toast.makeText(this, "更新成功", Toast.LENGTH_SHORT).show();
             }
             Log.d(TAG, "save: " + student);
             Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
